@@ -1,19 +1,67 @@
 import React from 'react';
 import axios from 'axios';
 
+const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
+
+const validateForm = (errors) => {
+  let valid = true;
+  Object.values(errors).forEach((val) => val.length > 0 && (valid = false));
+  return valid;
+}
+
+const countErrors = (errors) => {
+  let count = 0;
+  Object.values(errors).forEach((val) => val.length > 0 && (count = count + 1));
+  return count;
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
-      email: "",
-      birthDate: "",
-      agree: true
+      name: null,
+      email: null,
+      birthDate: null,
+      agree: false,
+      errors: {
+        name: "",
+        email: "",
+        birthDate: "",
+        agree: false
+      }
+    };
+  }
+
+
+
+  handleChange = (event) => {
+    event.preventDefault();
+    const { name, value } = event.target;
+    let errors = this.state.errors;
+
+    switch (name) {
+      case 'name':
+        errors.name = value.length < 2 ? 'Name must be at least 2 characters long!': '';
+        break;
+      case 'email':
+        errors.email = validEmailRegex.test(value) ? '': 'Email is not valid!';
+        break;
+      case 'birthDate':
+        errors.birthDate = value.length < 8 ? 'Birth Date must be at least 8 characters long!': '';
+        break;
+      case 'agree':
+        errors.agree = false ? 'You must agree to be contacted by email!': '';
+        break;
+
     }
+
+    this.setState({errors, [name]: value});
   }
 
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({formValid: validateForm(this.state.errors)});
+    this.setState({errorCount: countErrors(this.state.errors)});
     axios({
       method: "POST",
       url: "https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users",
@@ -33,6 +81,7 @@ class App extends React.Component {
   }
 
   render() {
+    const {errors, formValid} = this.state;
     return(
       <div className = "App">
         <form id = "contact-form" onSubmit = {this.handleSubmit.bind(this)} method = "POST">
@@ -54,6 +103,7 @@ class App extends React.Component {
           </div>
           <button type = "reset" className = "btn btn-secondary">Clear</button>
           <button type = "submit" className = "btn btn-primary">Submit</button>
+          {this.state.errorCount !== null ? <p className = 'form-status'>Form is {formValid ? 'valid' : 'invalid'}</p> : 'Form not submitted'}
         </form>
       </div>
     );
