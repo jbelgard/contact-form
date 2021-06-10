@@ -7,7 +7,7 @@ class App extends React.Component {
       birthDate: "",
       agree: true
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
+
   }
 
   render() {
@@ -24,19 +24,42 @@ class App extends React.Component {
           </div>
           <div className = "form-group">
             <label htmlFor = "birthDate">Birth Date</label>
-            <input type = "date" className = "birthdate" placeholder = "YYYY-MM-DD" data-date-split-input = "true" />
+            <input type = "date" className = "birthdate" placeholder = "YYYY-MM-DD" data-date-split-input = "true" value = {this.state.birthDate} onChange = {this.onBirthChange.bind(this)} />
           </div>
           <div className = "form-group">
             <label htmlFor = "agree">I agree to be contacted by email</label>
             <input type = "checkbox" className = "agree" checked = {this.state.agree} onChange = {this.onAgreeChange.bind(this)} />
           </div>
-          <input type = "submit" value = "Submit" />
+          <button type = "reset" className = "btn btn-secondary">Clear</button>
+          <button type = "submit" className = "btn btn-primary">Submit</button>
         </form>
       </div>
-    )
+    );
+  }
+
+  onNameChange(event) {
+    this.setState({name: event.target.value})
+  }
+
+  onEmailChange(event) {
+    this.setState({email: event.target.value})
+  }
+
+  onBirthChange(event) {
+    this.setState({birthDate: event.target.value})
+  }
+
+  onAgreeChange(event) {
+    this.setState({agree: event.target.value})
+  }
+
+  handleSubmit(event) {
+
   }
 
 
 
 
 }
+
+export default App;
