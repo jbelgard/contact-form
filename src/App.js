@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import axios from 'axios';
 
 class App extends React.Component {
   constructor(props) {
@@ -8,8 +9,27 @@ class App extends React.Component {
       email: "",
       birthDate: "",
       agree: true
-    };
+    }
+  }
 
+  handleSubmit(e) {
+    e.preventDefault();
+    axios({
+      method: "POST",
+      url: "https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users",
+      data: this.state
+    }).then((response) => {
+      if (response.data.status === 'success') {
+        alert("Message Sent, Thank you!");
+        this.resetForm()
+      } else if (response.data.status === 'fail') {
+        alert("Message Failed to send.")
+      }
+    })
+  }
+
+  resetForm() {
+    this.setState({name: '', email: '', birthDate: '', agree: false})
   }
 
   render() {
